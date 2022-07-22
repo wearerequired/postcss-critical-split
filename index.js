@@ -23,7 +23,7 @@ function CriticalSplit(newOptions = {}) {
 	return function(originalCss, { result, postcss }) {
 		if (applyUserOptions(newOptions)) {
 			setupStats();
-			performTransform(originalCss, result, postcss);
+			performTransform(originalCss, postcss);
 
 			if (userOptions.debug === true) {
 				processStats();
@@ -95,7 +95,7 @@ function processStats() {
 	console.log(message);
 }
 
-function performTransform(inputCss, result, postcss) {
+function performTransform(inputCss, postcss) {
 	var originalCss = clone(inputCss),
 		criticalCss = postcss.root();
 
@@ -105,14 +105,14 @@ function performTransform(inputCss, result, postcss) {
 	cleanUp(criticalCss);
 
 	switch(userOptions.output) {
-		case output_types.INPUT_CSS:
-			result.root = inputCss;
-			break;
 		case output_types.CRITICAL_CSS:
-			result.root = criticalCss;
+			inputCss = criticalCss;
 			break;
 		case output_types.REST_CSS:
-			result.root = originalCss;
+			inputCss = originalCss;
+			break;
+		case output_types.INPUT_CSS:
+			// Do nothing.
 			break;
 	}
 }
